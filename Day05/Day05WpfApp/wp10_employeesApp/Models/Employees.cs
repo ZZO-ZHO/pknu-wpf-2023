@@ -34,6 +34,5 @@ namespace wp10_employeesApp.Models
 
         public string Address { get; set; }
 
-
     }
 }
