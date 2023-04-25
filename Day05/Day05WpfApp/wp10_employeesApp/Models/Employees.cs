@@ -6,33 +6,28 @@ using System.Threading.Tasks;
 
 namespace wp10_employeesApp.Models
 {
-    internal class Employees
+    public class Employees
     {
         private int salary;
 
         public int Idx { get; set; }
-
         public string FullName { get; set; }
-
-        public int Salary
+        public int Salary 
         { 
-            get => salary;
-            set 
+            get => salary; 
+            set
             {
-                if (value < 0 || value > 50000000)
+                if (value <= 0 || value > 50000000)
                 {
-                    throw new Exception("급여오류");
+                    throw new Exception("급여 오류");
                 }
                 else
-                {
-                    Salary = value;
+                { 
+                    salary = value; 
                 }
             }
         }
-
         public string DeptName { get; set; }
-
         public string Address { get; set; }
-
     }
 }

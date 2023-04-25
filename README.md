@@ -37,4 +37,13 @@ Windows Presentation Foundation
 	- 데이터바인딩 DB연동
 	
 ## 6일차
-- WPF
+- WPF 응용
+ - 영화API 검색앱
+	- TMDB OpenAPI
+	- MahApps.Metro
+	- MahApps.Metro.IconPacks
+	- Newtonsoft.Json
+	
+6일차 영화 앱 중간
+
+<img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/App1.png" width="700">

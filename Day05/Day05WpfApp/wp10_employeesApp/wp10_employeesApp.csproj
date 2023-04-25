@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{60C5105B-0582-4C1F-BDD6-EEA5594BE5CD}</ProjectGuid>
+    <ProjectGuid>{E88973C5-9E57-4960-A859-24A50269738E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>wp10_employeesApp</RootNamespace>
     <AssemblyName>wp10_employeesApp</AssemblyName>

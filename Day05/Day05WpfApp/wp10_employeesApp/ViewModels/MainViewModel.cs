@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using wp10_employeesApp.Models;
@@ -13,7 +14,7 @@ namespace wp10_employeesApp.ViewModels
     {
         private Employees employee;
 
-        public BindableCollection<Employees> ListEmployees { get; set; }
+        public BindableCollection<Employees> ListEmployee { get; set; }
 
         public int Idx
         {
@@ -31,7 +32,7 @@ namespace wp10_employeesApp.ViewModels
             set
             {
                 employee.FullName = value;
-                NotifyOfPropertyChange(nameof(FullName));   
+                NotifyOfPropertyChange(nameof(FullName));
             }
         }
 
@@ -56,8 +57,8 @@ namespace wp10_employeesApp.ViewModels
         }
 
         public string Address
-        {
-            get => employee.Address;
+        { 
+            get => employee.Address; 
             set
             {
                 employee.Address = value;
@@ -71,17 +72,17 @@ namespace wp10_employeesApp.ViewModels
             {
                 conn.Open();
 
-                string selQeury = @"SELECT [idx]
-                                          ,[FullName]
-                                          ,[Salary]
-                                          ,[DeptName]
-                                          ,[Address]
-                                      FROM [dbo].[dbo.Employees]";
-                SqlCommand selCommand = new SqlCommand(selQeury, conn);
-                SqlDataReader reader = selCommand.ExecuteReader();
-                ListEmployees = new BindableCollection<Employees>();
+                string selQuery = @"SELECT [Idx]
+                                         , [FullName]
+                                         , [Salary]
+                                         , [DeptName]
+                                         , [Address]
+                                      FROM [Employees]";
+                SqlCommand SelCommand = new SqlCommand(selQuery, conn);
+                SqlDataReader reader = SelCommand.ExecuteReader();
+                ListEmployee = new BindableCollection<Employees>();
 
-                while(reader.Read())
+                while (reader.Read())
                 {
                     var emp = new Employees
                     {
@@ -89,12 +90,12 @@ namespace wp10_employeesApp.ViewModels
                         FullName = reader["FullName"].ToString(),
                         Salary = int.Parse(reader["Salary"].ToString()),
                         DeptName = reader["DeptName"].ToString(),
-                        Address = reader["address"].ToString(),
+                        Address = reader["address"].ToString()
                     };
-                    ListEmployees.Add(emp);
+                    ListEmployee.Add(emp);
                 }
+
             }
         }
-
     }
 }
