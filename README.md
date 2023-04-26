@@ -38,12 +38,26 @@ Windows Presentation Foundation
 	
 ## 6일차
 - WPF 응용
- - 영화API 검색앱
-	- TMDB OpenAPI
-	- MahApps.Metro
-	- MahApps.Metro.IconPacks
-	- Newtonsoft.Json
+	- 영화API 검색앱
+		- TMDB OpenAPI
+		- MahApps.Metro
+		- MahApps.Metro.IconPacks
+		- Newtonsoft.Json
 	
 6일차 영화 앱 중간
 
 <img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/App1.png" width="700">
+
+## 7일차
+- WPF 응용
+	- 영화검색앱
+		- 화면정리
+		- CefSharp.WPF
+		- Youtube OpenAPI
+		- DB 데이터바인딩
+
+7일차 영화검색앱  
+<img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/app2.gif" width="700">
+
+## 8일차
+- WPF 응용
