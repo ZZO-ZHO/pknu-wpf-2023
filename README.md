@@ -68,4 +68,4 @@ Windows Presentation Foundation
 
 영화검색앱  
 
-<img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/wp11.gif" width="700">
+<img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/wp11.gif" width="700">
