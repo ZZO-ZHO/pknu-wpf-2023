@@ -6,9 +6,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CodingTest"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-        xmlns:iconPack="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         mc:Ignorable="d"
-        Title="부산광역시 교육 강좌 탐색기 V1.0" Height="450" Width="800" Loaded="MetroWindow_Loaded">
+        Title="부산광역시 교육 강좌 탐색기 V1.0" Height="450" Width="800" Loaded="MetroWindow_Loaded" >
+        <mah:MetroWindow.IconTemplate>
+            <DataTemplate>
+                <iconPacks:PackIconRPGAwesome Kind="Cat" Margin="10,7,0,0" Foreground="White"/>
+            </DataTemplate>
+        </mah:MetroWindow.IconTemplate>
     <Grid>
 
         <Grid.RowDefinitions>
@@ -20,41 +25,49 @@
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="2.5*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Content="부산광역시 교육 강좌 현황" FontSize="16" FontWeight="Bold" Margin="10,10,10,10" Grid.ColumnSpan="2"/>
+            <Label Grid.Row="0" Content="부산광역시 교육 강좌 현황" FontSize="16" FontWeight="Bold" Margin="10,10,10,10" Grid.ColumnSpan="2" />
 
             <StackPanel Grid.Column="1" Orientation="Horizontal">
                 <ComboBox x:Name="CboAddress" Width="120" Margin="5" Style="{StaticResource MahApps.Styles.ComboBox}" 
                           mah:TextBoxHelper.Watermark="지역 선택"
                           mah:TextBoxHelper.UseFloatingWatermark="True"
-                          mah:TextBoxHelper.ClearTextButton="True" />
+                          mah:TextBoxHelper.ClearTextButton="True" SelectionChanged="CboAddress_SelectionChanged" />
                 <ComboBox x:Name="CboState" Width="120" Margin="5" Style="{StaticResource MahApps.Styles.ComboBox}" 
                           mah:TextBoxHelper.Watermark="상태 선택"
                           mah:TextBoxHelper.UseFloatingWatermark="True"
-                          mah:TextBoxHelper.ClearTextButton="True" />
+                          mah:TextBoxHelper.ClearTextButton="True" SelectionChanged="CboState_SelectionChanged" />
                 <StackPanel Grid.Column="1" Orientation="Vertical">
-                    <CheckBox x:Name="Chkfree" Content="무료" Margin="5, 7" Checked="Chkfree_Checked" />
-                    <CheckBox x:Name="ChkNight" Content="야간" Margin="5, 3" Checked="ChkNight_Checked" />
+                    <RadioButton x:Name="Chkfree" Content="무료" Margin="5, 7" Checked="Chkfree_Checked" Click="Chkfree_Click" />
+                    <RadioButton x:Name="ChkNight" Content="야간" Margin="5, 3" Checked="ChkNight_Checked" />
                 </StackPanel>
                 <Button x:Name="BtnView" Content="조회" Width="60" Margin="5" Style="{StaticResource MahApps.Styles.Button.Square.Accent}" Click="BtnView_Click" />
-                <StackPanel Grid.Column="1" Orientation="Vertical">
-                    <TextBox x:Name="LblName" Width="100" Height="18" Margin="0,3" 
-                          mah:TextBoxHelper.Watermark="이름"
-                          mah:TextBoxHelper.UseFloatingWatermark="True"
-                          mah:TextBoxHelper.ClearTextButton="True" />
-                    <TextBox x:Name="LblNumber" Width="100" Height="18" 
-                          mah:TextBoxHelper.Watermark="전화번호"
-                          mah:TextBoxHelper.UseFloatingWatermark="True"
-                          mah:TextBoxHelper.ClearTextButton="True" />
-                </StackPanel>
-                <Button x:Name="BtnJoin" Content="신청" Width="60" Margin="5" Style="{StaticResource MahApps.Styles.Button.Square.Highlight}" Click="BtnJoin_Click" />
-
+                <StackPanel Grid.Column="1" Orientation="Vertical"/>
             </StackPanel>
         </Grid>
         <DataGrid Grid.Row="1" x:Name="GrdResult" Style="{StaticResource MahApps.Styles.DataGrid.Azure}" Margin="10" 
-                  Grid.ColumnSpan="2" IsReadOnly="True"  ItemsSource="{Binding}" ></DataGrid>
+                  Grid.ColumnSpan="2" IsReadOnly="True"  ItemsSource="{Binding}" AutoGenerateColumns="False" MouseDoubleClick="GrdResult_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding LctreNm}" Header="강좌명" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding ProgrsSttusNm}" Header="접수상태" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctrePsncpa}" Header="정원" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding ResidualCNT}" Header="잔여" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreBeginTime}" Header="수업시작" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreEndTime}" Header="수업종료" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreBeginDttm}" Header="운영시작" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreEndDttm}" Header="운영종료" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding ReqstBeginDttm}" Header="신청시작" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding ReqstEndDttm}" Header="신청종료" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding Adres}" Header="주소" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding ResveGroupNm}" Header="운영기관" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctrePosblDfk}" Header="요일" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreChargeAmount}" Header="수강료" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding LctreRefrnc}" Header="문의전화" FontWeight="Bold" />
+                <DataGridTextColumn Binding="{Binding Gubun}" Header="신청방법" FontWeight="Bold" />
+            </DataGrid.Columns>
+        </DataGrid>
 
         <StatusBar Grid.Row="1" Grid.ColumnSpan="2" Margin="0,330,0,0" Grid.RowSpan="2">
             <StatusBarItem Content="교육강좌 현황" />

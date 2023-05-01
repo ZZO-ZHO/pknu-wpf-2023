@@ -96,3 +96,14 @@ Windows Presentation Foundation
 미세먼지확인 앱 완료  
 
 <img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/app3.gif" width="700">
+
+## 10일차
+- WPF 응용
+	- 개인 포트폴리오 개발
+		- MahApps.Metro
+		- 데이터포탈 OpenAPI
+		- DB 데이터바인딩 (MySQL)
+		
+부산광역시 교육강좌 현황 앱 완료  
+
+<img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/codingtest.gif" width="700">

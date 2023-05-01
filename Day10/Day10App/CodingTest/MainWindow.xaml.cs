@@ -25,6 +25,7 @@ using Newtonsoft.Json.Linq;
 using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using System.Data;
+using System.Windows.Media.Media3D;
 
 namespace CodingTest
 {
@@ -76,7 +77,7 @@ namespace CodingTest
                     var classList = new List<ClassList>();
                     foreach (var list in json_array)
                     {
-                        
+
                         classList.Add(new ClassList
                         {
                             Id = 0,
@@ -96,10 +97,10 @@ namespace CodingTest
                             Gubun = Convert.ToString(list["gubun"]),
                             ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
                             LctreResveMth = Convert.ToString(list["lctreResveMth"]),
-                            LctrePsncpa = Convert.ToInt32(list["lctrePsncpa"]),
-                            ApplyCnt = Convert.ToInt32(list["applyCnt"]),
-                            AdresLo = Convert.ToDouble(list["adresLo"]),
-                            AdresLa = Convert.ToDouble(list["adresLa"]),
+                            LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                            ApplyCnt = Convert.ToString(list["applyCnt"]),
+                            AdresLo = Convert.ToString(list["adresLo"]),
+                            AdresLa = Convert.ToString(list["adresLa"]),
                             Adres = Convert.ToString(list["adres"]),
                             ResidualCNT = Convert.ToString(list["residualCNT"])
                         });
@@ -117,10 +118,10 @@ namespace CodingTest
             using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
             {
                 conn.Open();
-                var query = @"SELECT DATE_FORMAT(Timestamp, '%Y-%m-%d') AS Save_Date
-                                  FROM dustsensor
-                                 GROUP BY 1
-                                 ORDER BY 1";
+                var query = @"SELECT SUBSTRING(adres, 4, LOCATE(' ', adres, 3)) AS adr
+                                  FROM classlist
+                                  WHERE adres LIKE '%구%'
+                                  group by 1";
                 MySqlCommand cmd = new MySqlCommand(query, conn);
                 MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
                 DataSet ds = new DataSet();
@@ -128,120 +129,422 @@ namespace CodingTest
                 List<string> saveDateList = new List<string>();
                 foreach (DataRow row in ds.Tables[0].Rows)
                 {
-                    saveDateList.Add(Convert.ToString(row["Save_Date"]));
+                    saveDateList.Add(Convert.ToString(row["adr"]));
                 }
                 CboAddress.ItemsSource = saveDateList;
             }
 
+            using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+            {
+                conn.Open();
+                var query = @"SELECT progrsSttusNm AS st
+                                  FROM classlist
+                                  group by 1";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds);
+                List<string> saveDateList = new List<string>();
+                foreach (DataRow row in ds.Tables[0].Rows)
+                {
+                    saveDateList.Add(Convert.ToString(row["st"]));
+                }
+                CboState.ItemsSource = saveDateList;
+            }
+
+
+
         }
 
-        private void BtnView_Click(object sender, RoutedEventArgs e)
+        private async void BtnView_Click(object sender, RoutedEventArgs e)
         {
+            if (CboAddress.SelectedValue != null && CboState.SelectedValue != null)
+            {
+                // MessageBox.Show(CboReqDate.SelectedValue.ToString());
+                using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+                {
+                    conn.Open();
+                    var query = @"SELECT Id,
+                                        LctreNm,
+                                        ProgrsSttusNm,
+                                        LctreBeginTime,
+                                        LctreEndDttm,
+                                        ReqstBeginDttm,
+                                        ReqstEndDttm,
+                                        CanclUseAt,
+                                        LctreChargeAmount,
+                                        LctrePosblDfk,
+                                        LctreBeginDttm,
+                                        LctreEndTime,
+                                        LctreRefrnc,
+                                        FileOrginlNm,
+                                        Gubun,
+                                        ResveGroupNm,
+                                        LctreResveMth,
+                                        LctrePsncpa,
+                                        ApplyCnt,
+                                        AdresLo,
+                                        AdresLa,
+                                        Adres,
+                                        ResidualCNT
+                                    FROM classlist
+                                    WHERE SUBSTRING(adres, 4, LOCATE(' ', adres, 3)) = @Adres AND progrsSttusNm = @ProgrsSttusNm;";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Adres", CboAddress.SelectedValue.ToString());
+                    cmd.Parameters.AddWithValue("@ProgrsSttusNm", CboState.SelectedValue.ToString());
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+                    adapter.Fill(ds, "classlist");
+                    List<ClassList> classList = new List<ClassList>();
+                    foreach (DataRow list in ds.Tables["classList"].Rows)
+                    {
+                        classList.Add(new ClassList
+                        {
+                            Id = 0,
+                            LctreNm = Convert.ToString(list["lctreNm"]),
+                            ProgrsSttusNm = Convert.ToString(list["progrsSttusNm"]),
+                            LctreBeginTime = Convert.ToString(list["lctreBeginTime"]),
+                            LctreEndDttm = Convert.ToString(list["lctreEndDttm"]),
+                            ReqstBeginDttm = Convert.ToString(list["reqstBeginDttm"]),
+                            ReqstEndDttm = Convert.ToString(list["reqstEndDttm"]),
+                            CanclUseAt = Convert.ToString(list["canclUseAt"]),
+                            LctreChargeAmount = Convert.ToString(list["lctreChargeAmount"]),
+                            LctrePosblDfk = Convert.ToString(list["lctrePosblDfk"]),
+                            LctreBeginDttm = Convert.ToString(list["lctreBeginDttm"]),
+                            LctreEndTime = Convert.ToString(list["lctreEndTime"]),
+                            LctreRefrnc = Convert.ToString(list["lctreRefrnc"]),
+                            FileOrginlNm = Convert.ToString(list["fileOrginlNm"]),
+                            Gubun = Convert.ToString(list["gubun"]),
+                            ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
+                            LctreResveMth = Convert.ToString(list["lctreResveMth"]),
+                            LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                            ApplyCnt = Convert.ToString(list["applyCnt"]),
+                            AdresLo = Convert.ToString(list["adresLo"]),
+                            AdresLa = Convert.ToString(list["adresLa"]),
+                            Adres = Convert.ToString(list["adres"]),
+                            ResidualCNT = Convert.ToString(list["residualCNT"])
+                        });
+                    }
 
+                    this.DataContext = classList;
+                    StsResult.Content = $"OpenAPI {classList.Count}건 조회완료";
+                }
+            }
+            else if (CboAddress.SelectedValue != null && CboState.SelectedValue == null)
+            {
+                using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+                {
+                    conn.Open();
+                    var query = @"SELECT Id,
+                                        LctreNm,
+                                        ProgrsSttusNm,
+                                        LctreBeginTime,
+                                        LctreEndDttm,
+                                        ReqstBeginDttm,
+                                        ReqstEndDttm,
+                                        CanclUseAt,
+                                        LctreChargeAmount,
+                                        LctrePosblDfk,
+                                        LctreBeginDttm,
+                                        LctreEndTime,
+                                        LctreRefrnc,
+                                        FileOrginlNm,
+                                        Gubun,
+                                        ResveGroupNm,
+                                        LctreResveMth,
+                                        LctrePsncpa,
+                                        ApplyCnt,
+                                        AdresLo,
+                                        AdresLa,
+                                        Adres,
+                                        ResidualCNT
+                                    FROM classlist
+                                    WHERE SUBSTRING(adres, 4, LOCATE(' ', adres, 3)) = @Adres ";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@Adres", CboAddress.SelectedValue.ToString());
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+                    adapter.Fill(ds, "classlist");
+                    List<ClassList> classList = new List<ClassList>();
+                    foreach (DataRow list in ds.Tables["classList"].Rows)
+                    {
+                        classList.Add(new ClassList
+                        {
+                            Id = 0,
+                            LctreNm = Convert.ToString(list["lctreNm"]),
+                            ProgrsSttusNm = Convert.ToString(list["progrsSttusNm"]),
+                            LctreBeginTime = Convert.ToString(list["lctreBeginTime"]),
+                            LctreEndDttm = Convert.ToString(list["lctreEndDttm"]),
+                            ReqstBeginDttm = Convert.ToString(list["reqstBeginDttm"]),
+                            ReqstEndDttm = Convert.ToString(list["reqstEndDttm"]),
+                            CanclUseAt = Convert.ToString(list["canclUseAt"]),
+                            LctreChargeAmount = Convert.ToString(list["lctreChargeAmount"]),
+                            LctrePosblDfk = Convert.ToString(list["lctrePosblDfk"]),
+                            LctreBeginDttm = Convert.ToString(list["lctreBeginDttm"]),
+                            LctreEndTime = Convert.ToString(list["lctreEndTime"]),
+                            LctreRefrnc = Convert.ToString(list["lctreRefrnc"]),
+                            FileOrginlNm = Convert.ToString(list["fileOrginlNm"]),
+                            Gubun = Convert.ToString(list["gubun"]),
+                            ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
+                            LctreResveMth = Convert.ToString(list["lctreResveMth"]),
+                            LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                            ApplyCnt = Convert.ToString(list["applyCnt"]),
+                            AdresLo = Convert.ToString(list["adresLo"]),
+                            AdresLa = Convert.ToString(list["adresLa"]),
+                            Adres = Convert.ToString(list["adres"]),
+                            ResidualCNT = Convert.ToString(list["residualCNT"])
+                        });
+                    }
 
+                    this.DataContext = classList;
+                    StsResult.Content = $"OpenAPI {classList.Count}건 조회완료";
+                }
+            }
+            else if (CboAddress.SelectedValue == null && CboState.SelectedValue != null)
+            {
+                using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+                {
+                    conn.Open();
+                    var query = @"SELECT Id,
+                                        LctreNm,
+                                        ProgrsSttusNm,
+                                        LctreBeginTime,
+                                        LctreEndDttm,
+                                        ReqstBeginDttm,
+                                        ReqstEndDttm,
+                                        CanclUseAt,
+                                        LctreChargeAmount,
+                                        LctrePosblDfk,
+                                        LctreBeginDttm,
+                                        LctreEndTime,
+                                        LctreRefrnc,
+                                        FileOrginlNm,
+                                        Gubun,
+                                        ResveGroupNm,
+                                        LctreResveMth,
+                                        LctrePsncpa,
+                                        ApplyCnt,
+                                        AdresLo,
+                                        AdresLa,
+                                        Adres,
+                                        ResidualCNT
+                                    FROM classlist
+                                    WHERE progrsSttusNm = @ProgrsSttusNm;";
+                    MySqlCommand cmd = new MySqlCommand(query, conn);
+                    cmd.Parameters.AddWithValue("@ProgrsSttusNm", CboState.SelectedValue.ToString());
+                    MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+                    adapter.Fill(ds, "classlist");
+                    List<ClassList> classList = new List<ClassList>();
+                    foreach (DataRow list in ds.Tables["classList"].Rows)
+                    {
+                        classList.Add(new ClassList
+                        {
+                            Id = 0,
+                            LctreNm = Convert.ToString(list["lctreNm"]),
+                            ProgrsSttusNm = Convert.ToString(list["progrsSttusNm"]),
+                            LctreBeginTime = Convert.ToString(list["lctreBeginTime"]),
+                            LctreEndDttm = Convert.ToString(list["lctreEndDttm"]),
+                            ReqstBeginDttm = Convert.ToString(list["reqstBeginDttm"]),
+                            ReqstEndDttm = Convert.ToString(list["reqstEndDttm"]),
+                            CanclUseAt = Convert.ToString(list["canclUseAt"]),
+                            LctreChargeAmount = Convert.ToString(list["lctreChargeAmount"]),
+                            LctrePosblDfk = Convert.ToString(list["lctrePosblDfk"]),
+                            LctreBeginDttm = Convert.ToString(list["lctreBeginDttm"]),
+                            LctreEndTime = Convert.ToString(list["lctreEndTime"]),
+                            LctreRefrnc = Convert.ToString(list["lctreRefrnc"]),
+                            FileOrginlNm = Convert.ToString(list["fileOrginlNm"]),
+                            Gubun = Convert.ToString(list["gubun"]),
+                            ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
+                            LctreResveMth = Convert.ToString(list["lctreResveMth"]),
+                            LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                            ApplyCnt = Convert.ToString(list["applyCnt"]),
+                            AdresLo = Convert.ToString(list["adresLo"]),
+                            AdresLa = Convert.ToString(list["adresLa"]),
+                            Adres = Convert.ToString(list["adres"]),
+                            ResidualCNT = Convert.ToString(list["residualCNT"])
+                        });
+                    }
+                    this.DataContext = classList;
+                    StsResult.Content = $"OpenAPI {classList.Count}건 조회완료";
+                }
+            }
+            else
+            {
+                await Commons.ShowMessageAsync("오류", "조건을 선택주세요.");
+            }
         }
 
         private void Chkfree_Checked(object sender, RoutedEventArgs e)
         {
-
+            using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+            {
+                conn.Open();
+                var query = @"SELECT Id,
+                                        LctreNm,
+                                        ProgrsSttusNm,
+                                        LctreBeginTime,
+                                        LctreEndDttm,
+                                        ReqstBeginDttm,
+                                        ReqstEndDttm,
+                                        CanclUseAt,
+                                        LctreChargeAmount,
+                                        LctrePosblDfk,
+                                        LctreBeginDttm,
+                                        LctreEndTime,
+                                        LctreRefrnc,
+                                        FileOrginlNm,
+                                        Gubun,
+                                        ResveGroupNm,
+                                        LctreResveMth,
+                                        LctrePsncpa,
+                                        ApplyCnt,
+                                        AdresLo,
+                                        AdresLa,
+                                        Adres,
+                                        ResidualCNT
+                                    FROM classlist
+                                    WHERE LctreChargeAmount Like '0' ;";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds, "classlist");
+                List<ClassList> classList = new List<ClassList>();
+                foreach (DataRow list in ds.Tables["classList"].Rows)
+                {
+                    classList.Add(new ClassList
+                    {
+                        Id = 0,
+                        LctreNm = Convert.ToString(list["lctreNm"]),
+                        ProgrsSttusNm = Convert.ToString(list["progrsSttusNm"]),
+                        LctreBeginTime = Convert.ToString(list["lctreBeginTime"]),
+                        LctreEndDttm = Convert.ToString(list["lctreEndDttm"]),
+                        ReqstBeginDttm = Convert.ToString(list["reqstBeginDttm"]),
+                        ReqstEndDttm = Convert.ToString(list["reqstEndDttm"]),
+                        CanclUseAt = Convert.ToString(list["canclUseAt"]),
+                        LctreChargeAmount = Convert.ToString(list["lctreChargeAmount"]),
+                        LctrePosblDfk = Convert.ToString(list["lctrePosblDfk"]),
+                        LctreBeginDttm = Convert.ToString(list["lctreBeginDttm"]),
+                        LctreEndTime = Convert.ToString(list["lctreEndTime"]),
+                        LctreRefrnc = Convert.ToString(list["lctreRefrnc"]),
+                        FileOrginlNm = Convert.ToString(list["fileOrginlNm"]),
+                        Gubun = Convert.ToString(list["gubun"]),
+                        ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
+                        LctreResveMth = Convert.ToString(list["lctreResveMth"]),
+                        LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                        ApplyCnt = Convert.ToString(list["applyCnt"]),
+                        AdresLo = Convert.ToString(list["adresLo"]),
+                        AdresLa = Convert.ToString(list["adresLa"]),
+                        Adres = Convert.ToString(list["adres"]),
+                        ResidualCNT = Convert.ToString(list["residualCNT"])
+                    });
+                }
+                this.DataContext = classList;
+                StsResult.Content = $"OpenAPI {classList.Count}건 조회완료";
+                CboAddress.Text = null;
+                CboState.Text = null;
+            }
         }
+
 
         private void ChkNight_Checked(object sender, RoutedEventArgs e)
         {
-
+            using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
+            {
+                conn.Open();
+                var query = @"SELECT Id,
+	                            LctreNm,
+	                            ProgrsSttusNm,
+	                            LctreBeginTime,
+	                            LctreEndDttm,
+	                            ReqstBeginDttm,
+	                            ReqstEndDttm,
+	                            CanclUseAt,
+	                            LctreChargeAmount,
+	                            LctrePosblDfk,
+	                            LctreBeginDttm,
+	                            LctreEndTime,
+	                            LctreRefrnc,
+	                            FileOrginlNm,
+	                            Gubun,
+	                            ResveGroupNm,
+	                            LctreResveMth,
+	                            LctrePsncpa,
+	                            ApplyCnt,
+	                            AdresLo,
+	                            AdresLa,
+	                            Adres,
+	                            ResidualCNT
+                            FROM classlist
+                            WHERE LctreNm Like '%야간%';";
+                MySqlCommand cmd = new MySqlCommand(query, conn);
+                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+                DataSet ds = new DataSet();
+                adapter.Fill(ds, "classlist");
+                List<ClassList> classList = new List<ClassList>();
+                foreach (DataRow list in ds.Tables["classList"].Rows)
+                {
+                    classList.Add(new ClassList
+                    {
+                        Id = 0,
+                        LctreNm = Convert.ToString(list["lctreNm"]),
+                        ProgrsSttusNm = Convert.ToString(list["progrsSttusNm"]),
+                        LctreBeginTime = Convert.ToString(list["lctreBeginTime"]),
+                        LctreEndDttm = Convert.ToString(list["lctreEndDttm"]),
+                        ReqstBeginDttm = Convert.ToString(list["reqstBeginDttm"]),
+                        ReqstEndDttm = Convert.ToString(list["reqstEndDttm"]),
+                        CanclUseAt = Convert.ToString(list["canclUseAt"]),
+                        LctreChargeAmount = Convert.ToString(list["lctreChargeAmount"]),
+                        LctrePosblDfk = Convert.ToString(list["lctrePosblDfk"]),
+                        LctreBeginDttm = Convert.ToString(list["lctreBeginDttm"]),
+                        LctreEndTime = Convert.ToString(list["lctreEndTime"]),
+                        LctreRefrnc = Convert.ToString(list["lctreRefrnc"]),
+                        FileOrginlNm = Convert.ToString(list["fileOrginlNm"]),
+                        Gubun = Convert.ToString(list["gubun"]),
+                        ResveGroupNm = Convert.ToString(list["resveGroupNm"]),
+                        LctreResveMth = Convert.ToString(list["lctreResveMth"]),
+                        LctrePsncpa = Convert.ToString(list["lctrePsncpa"]),
+                        ApplyCnt = Convert.ToString(list["applyCnt"]),
+                        AdresLo = Convert.ToString(list["adresLo"]),
+                        AdresLa = Convert.ToString(list["adresLa"]),
+                        Adres = Convert.ToString(list["adres"]),
+                        ResidualCNT = Convert.ToString(list["residualCNT"])
+                    });
+                }
+                this.DataContext = classList;
+                StsResult.Content = $"OpenAPI {classList.Count}건 조회완료";
+                CboAddress.Text = null;
+                CboState.Text = null;
+            }
         }
 
-        private async void BtnJoin_Click(object sender, RoutedEventArgs e)
+        private void CboAddress_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            #region < DB 저장 >
-            if (GrdResult.Items.Count == 0)
-            {
-                await Commons.ShowMessageAsync("오류", "조회하고 저장하세요.");
-                return;
-            }
+            Chkfree.IsChecked = false;
+            ChkNight.IsChecked = false;
+        }
 
-            try
-            {
-                using (MySqlConnection conn = new MySqlConnection(Commons.myConnString))
-                {
-                    if (conn.State == System.Data.ConnectionState.Closed) conn.Open();
+        private void CboState_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Chkfree.IsChecked = false;
+            ChkNight.IsChecked = false;
+        }
 
-                    var query = @"INSERT INTO classlist
-                                                (LctreNm,
-                                                ProgrsSttusNm,
-                                                LctreBeginTime,
-                                                LctreEndDttm,
-                                                ReqstBeginDttm,
-                                                ReqstEndDttm,
-                                                CanclUseAt,
-                                                LctreChargeAmount,
-                                                LctrePosblDfk,
-                                                LctreBeginDttm,
-                                                LctreEndTime,
-                                                LctreRefrnc,
-                                                FileOrginlNm,
-                                                Gubun,
-                                                ResveGroupNm,
-                                                LctreResveMth,
-                                                Id)
-                                                VALUES
-                                                (@LctreNm,
-                                                @ProgrsSttusNm,
-                                                @LctreBeginTime,
-                                                @LctreEndDttm,
-                                                @ReqstBeginDttm,
-                                                @ReqstEndDttm,
-                                                @CanclUseAt,
-                                                @LctreChargeAmount,
-                                                @LctrePosblDfk,
-                                                @LctreBeginDttm,
-                                                @LctreEndTime,
-                                                @LctreRefrnc,
-                                                @FileOrginlNm,
-                                                @Gubun,
-                                                @ResveGroupNm,
-                                                @LctreResveMth,
-                                                @Id);";
-                    var insRes = 0;
-                    foreach (var temp in GrdResult.Items)
-                    {
-                        if (temp is ClassList)
-                        {
-                            var item = temp as ClassList;
+        private void Chkfree_Click(object sender, RoutedEventArgs e)
+        {
+            Chkfree_Checked(sender, e);
+            Chkfree.IsChecked = true;
+        }
 
-                            MySqlCommand cmd = new MySqlCommand(query, conn);
-                            cmd.Parameters.AddWithValue("@LctreNm", item.LctreNm);
-                            cmd.Parameters.AddWithValue("@ProgrsSttusNm", item.ProgrsSttusNm);
-                            cmd.Parameters.AddWithValue("@LctreBeginTime", item.LctreBeginTime);
-                            cmd.Parameters.AddWithValue("@LctreEndDttm", item.LctreEndDttm);
-                            cmd.Parameters.AddWithValue("@ReqstBeginDttm", item.ReqstBeginDttm);
-                            cmd.Parameters.AddWithValue("@ReqstEndDttm", item.ReqstEndDttm);
-                            cmd.Parameters.AddWithValue("@CanclUseAt", item.CanclUseAt);
-                            cmd.Parameters.AddWithValue("@LctreChargeAmount", item.LctreChargeAmount);
-                            cmd.Parameters.AddWithValue("@LctrePosblDfk", item.LctrePosblDfk);
-                            cmd.Parameters.AddWithValue("@LctreBeginDttm", item.LctreBeginDttm);
-                            cmd.Parameters.AddWithValue("@LctreEndTime", item.LctreEndTime);
-                            cmd.Parameters.AddWithValue("@LctreRefrnc", item.LctreRefrnc);
-                            cmd.Parameters.AddWithValue("@FileOrginlNm", item.FileOrginlNm);
-                            cmd.Parameters.AddWithValue("@Gubun", item.Gubun);
-                            cmd.Parameters.AddWithValue("@ResveGroupNm", item.ResveGroupNm);
-                            cmd.Parameters.AddWithValue("@LctreResveMth", item.LctreResveMth);
-                            cmd.Parameters.AddWithValue("@Id", item.Id);
+        private void GrdResult_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var selItem = GrdResult.SelectedItem as ClassList;
 
-                            insRes += cmd.ExecuteNonQuery();
-                        }
-                    }
+            var mapWindow = new MapWindow(Convert.ToDouble(selItem.AdresLo), Convert.ToDouble(selItem.AdresLa));  // 부모창 위치값을 자식창으로 전달
+            mapWindow.Owner = this;     // MainWindow 부모
+            mapWindow.WindowStartupLocation = WindowStartupLocation.CenterOwner;    // 부모창 중간에 출력
+            mapWindow.ShowDialog();
 
-                    await Commons.ShowMessageAsync("저장", $"DB 저장 성공!!");
-                    StsResult.Content = $"DB저장 {insRes}건 성공";
-
-                }
-            }
-            catch (Exception ex)
-            {
-                await Commons.ShowMessageAsync("오류", $"DB 저장 오류 {ex.Message}");
-            }
-            #endregion
         }
     }
 }

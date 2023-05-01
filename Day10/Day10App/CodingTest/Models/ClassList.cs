@@ -52,10 +52,10 @@ namespace CodingTest.Models
         public string ResveGroupNm { get; set; }
         public string LctreResveMth { get; set; }
 
-        public int LctrePsncpa { get; set; }
-        public int ApplyCnt { get; set; }
-        public double AdresLo { get; set; }
-        public double AdresLa { get; set; }
+        public string LctrePsncpa { get; set; }
+        public string ApplyCnt { get; set; }
+        public string AdresLo { get; set; }
+        public string AdresLa { get; set; }
         public string Adres { get ; set; }
         public string ResidualCNT { get; set;}
 
