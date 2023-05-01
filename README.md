@@ -103,7 +103,13 @@ Windows Presentation Foundation
 		- MahApps.Metro
 		- 데이터포탈 OpenAPI
 		- DB 데이터바인딩 (MySQL)
-		
-부산광역시 교육강좌 현황 앱 완료  
+
+부산광역시 교육강좌 현황 앱  
+ - 부산시에서 진행중인 교육강좌를 지역별로 검색하는 앱
+ - 대기중, 접수마감, 접수중, 교육중 의 상태별로 검색기능
+ - 수강료 무료인경우와 야간 수업만 별도 검색 기능
+ - 강좌 더블클릭시 맵상에 위치 표시
+ 
 
 <img src = "https://raw.githubusercontent.com/ZZO-ZHO/pknu-wpf-2023/main/img/codingtest.gif" width="700">
+
